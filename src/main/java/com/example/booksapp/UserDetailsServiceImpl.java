@@ -15,6 +15,9 @@ import java.sql.SQLException;
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
 
+    public static final String DEF_USERS_BY_USERNAME_QUERY =
+            "select id, username, password, enabled, email, wishlist_id, have_read_list_id from users where username = ?";
+
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
@@ -26,16 +29,15 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        String sql = "SELECT * FROM users WHERE username = ?";
-
-        User userinfo = jdbcTemplate.queryForObject(sql, new Object[]{username}, new RowMapper<User>() {
+        User userinfo = jdbcTemplate.queryForObject(DEF_USERS_BY_USERNAME_QUERY, new Object[]{username}, new RowMapper<User>() {
             @Override
             public User mapRow(ResultSet rs, int rowNum) throws SQLException {
                 User user = new User();
                 user.setId(rs.getInt("id"));
                 user.setUsername(rs.getString("username"));
-                user.setEmail(rs.getString("email"));
                 user.setPassword(rs.getString("password"));
+                user.setEnabled(rs.getBoolean("enabled"));
+                user.setEmail(rs.getString("email"));
                 user.setCreated_at(rs.getDate("created_at"));
                 user.setWishlist_id(rs.getInt("wishlist_id"));
                 user.setHave_read_list_id(rs.getInt("have_read_list_id"));
@@ -43,7 +45,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             }
         });
 
-        UserDetails userDetails = (UserDetails)new User(userinfo.getId(), userinfo.getUsername(), userinfo.getEmail(), userinfo.getPassword(), userinfo.getCreated_at(), userinfo.getWishlist_id(), userinfo.getHave_read_list_id());
+        UserDetails userDetails = (UserDetails)new User(userinfo.getId(), userinfo.getUsername(), userinfo.getPassword(), userinfo.isEnabled(), userinfo.getEmail(), userinfo.getCreated_at(), userinfo.getWishlist_id(), userinfo.getHave_read_list_id());
         return userDetails;
     }
 

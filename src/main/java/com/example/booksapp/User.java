@@ -10,15 +10,17 @@ public class User {
     private String username;
     private String email;
     private String password;
+    private boolean enabled;
     private java.sql.Date created_at;
     private int wishlist_id;
     private int have_read_list_id;
 
-    public User(int id, String username, String email, String password, Date created_at, int wishlist_id, int have_read_list_id) {
+    public User(int id, String username, String password, boolean enabled, String email, Date created_at, int wishlist_id, int have_read_list_id) {
         this.id = id;
         this.username = username;
-        this.email = email;
         this.password = password;
+        this.enabled = enabled;
+        this.email = email;
         this.created_at = created_at;
         this.wishlist_id = wishlist_id;
         this.have_read_list_id = have_read_list_id;
@@ -58,6 +60,10 @@ public class User {
     public void setPassword(String password) {
         this.password = password;
     }
+
+    public boolean isEnabled() { return enabled; }
+
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
 
     public Date getCreated_at() {
         return created_at;
